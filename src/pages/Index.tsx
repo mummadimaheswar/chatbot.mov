@@ -1,7 +1,7 @@
-import LLMSystemApp from '@/components/LLMSystemApp';
+import DeveloperChatbot from '@/components/DeveloperChatbot';
 
 const Index = () => {
-  return <LLMSystemApp />;
+  return <DeveloperChatbot />;
 };
 
 export default Index;
