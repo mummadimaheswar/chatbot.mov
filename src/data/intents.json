@@ -1,0 +1,54 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": ["Hi", "Hello", "Hey", "Is anyone there?", "Good day", "Good morning", "Good afternoon"],
+      "responses": ["Hello! I'm your AI coding assistant. How can I help you today?", "Hi there! Ready to write some code?", "Hello! I'm here to help with all your programming needs."]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": ["Bye", "See you later", "Goodbye", "Thanks for your help", "That's all"],
+      "responses": ["Goodbye! Happy coding!", "See you soon! Keep building amazing things!", "Until next time! Remember, every bug is just an undocumented feature."]
+    },
+    {
+      "tag": "thanks",
+      "patterns": ["Thanks", "Thank you", "Much appreciated", "Great job", "Perfect"],
+      "responses": ["You're welcome! Glad I could help!", "Happy to help! Keep coding!", "Anytime! That's what I'm here for."]
+    },
+    {
+      "tag": "code_generation",
+      "patterns": ["Write a function", "Generate code", "Create a script", "Build a", "Make a", "Code for", "Write code"],
+      "responses": ["I'll help you generate that code! What specific functionality do you need?", "Let me create that for you. What programming language would you prefer?", "Sure! I can write that code. Could you provide more details about the requirements?"]
+    },
+    {
+      "tag": "debugging",
+      "patterns": ["Debug", "Fix this error", "What's wrong", "Error in code", "Bug", "Not working", "Help with error"],
+      "responses": ["I'll help you debug that! Please share your code and I'll identify the issue.", "Let me take a look at that error. Paste your code and I'll help fix it.", "Debugging time! Share your code and the error message, and I'll help resolve it."]
+    },
+    {
+      "tag": "explanation",
+      "patterns": ["Explain this code", "What does this do", "How does this work", "Can you explain", "Break down", "Walk through"],
+      "responses": ["I'd be happy to explain that code! Please share it and I'll break it down for you.", "Sure! I can walk through that code step by step. Please paste it here.", "I'll explain how that works. Share your code and I'll provide a detailed breakdown."]
+    },
+    {
+      "tag": "languages",
+      "patterns": ["Python", "JavaScript", "Java", "C++", "HTML", "CSS", "React", "Node.js", "SQL", "R"],
+      "responses": ["Great choice! I can help with {language} programming. What would you like to build?", "I'm well-versed in {language}. What specific task can I help you with?", "{language} is awesome! What kind of project are you working on?"]
+    },
+    {
+      "tag": "algorithms",
+      "patterns": ["Sorting algorithm", "Search algorithm", "Data structure", "Binary tree", "Linked list", "Graph", "Dynamic programming"],
+      "responses": ["Let's dive into algorithms! Which specific algorithm or data structure interests you?", "Algorithms are fascinating! I can help implement and explain various sorting, searching, and data structure algorithms.", "I love algorithm questions! What specific algorithm challenge are you working on?"]
+    },
+    {
+      "tag": "machine_learning",
+      "patterns": ["Machine learning", "ML", "AI", "Neural network", "Deep learning", "TensorFlow", "PyTorch", "Scikit-learn"],
+      "responses": ["Exciting! Machine learning is my specialty. What kind of ML project are you building?", "I can help with ML implementations! Are you looking for classification, regression, or something else?", "Let's build some AI! What machine learning problem are you trying to solve?"]
+    },
+    {
+      "tag": "web_development",
+      "patterns": ["Web development", "Frontend", "Backend", "API", "REST", "Database", "Full stack"],
+      "responses": ["Web development is great! Are you working on frontend, backend, or full-stack?", "I can help with all aspects of web development. What part of your web project needs attention?", "Let's build for the web! What kind of web application are you creating?"]
+    }
+  ]
+}
