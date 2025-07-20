@@ -55,20 +55,32 @@ export const MovieChat: React.FC = () => {
     setInputValue('');
     setIsLoading(true);
 
-    // Simulate AI processing delay
-    setTimeout(() => {
-      const aiResponse = movieService.generateAIResponse(inputValue, '');
-      
-      const botMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: aiResponse,
-        isUser: false,
-        timestamp: new Date()
-      };
+    // Enhanced AI processing with real intelligence
+    setTimeout(async () => {
+      try {
+        const aiResponse = await movieService.generateAIResponse(inputValue, '');
+        
+        const botMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          content: aiResponse,
+          isUser: false,
+          timestamp: new Date()
+        };
 
-      setMessages(prev => [...prev, botMessage]);
-      setIsLoading(false);
-    }, 1000);
+        setMessages(prev => [...prev, botMessage]);
+      } catch (error) {
+        console.error('AI response error:', error);
+        const errorMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          content: '❌ Sorry, I encountered an error processing your request. Please try again!',
+          isUser: false,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, errorMessage]);
+      } finally {
+        setIsLoading(false);
+      }
+    }, 1500); // Slightly longer delay for enhanced processing
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -194,13 +206,14 @@ export const MovieChat: React.FC = () => {
           </Button>
         </div>
         
-        {/* Quick suggestions */}
+        {/* Enhanced quick suggestions */}
         <div className="flex flex-wrap gap-2 mt-3">
           {[
-            "What's the rating of Inception?",
-            "Recommend top action movies",
-            "Tell me about The Dark Knight",
-            "What genres do you have?"
+            "Movies like The Matrix",
+            "I want something funny tonight",
+            "Best sci-fi movies ever",
+            "Tell me about Christopher Nolan films",
+            "What's better: Inception or Interstellar?"
           ].map((suggestion) => (
             <Button
               key={suggestion}
