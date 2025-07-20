@@ -1,7 +1,7 @@
-import { DeveloperChatbot } from '@/components/DeveloperChatbot';
+import { MovieChatbot } from '@/components/MovieChatbot';
 
 const Index = () => {
-  return <DeveloperChatbot />;
+  return <MovieChatbot />;
 };
 
 export default Index;
