@@ -1,0 +1,74 @@
+[
+  {
+    "movie": "The Dark Knight",
+    "character": "Joker",
+    "quote": "Why so serious?",
+    "context": "chaos"
+  },
+  {
+    "movie": "The Dark Knight",
+    "character": "Batman",
+    "quote": "It's not who I am underneath, but what I do that defines me.",
+    "context": "heroic"
+  },
+  {
+    "movie": "Inception",
+    "character": "Dom Cobb",
+    "quote": "We need to go deeper.",
+    "context": "complex"
+  },
+  {
+    "movie": "The Matrix",
+    "character": "Morpheus",
+    "quote": "There is no spoon.",
+    "context": "philosophical"
+  },
+  {
+    "movie": "The Godfather",
+    "character": "Don Corleone",
+    "quote": "I'm gonna make him an offer he can't refuse.",
+    "context": "intimidating"
+  },
+  {
+    "movie": "Forrest Gump",
+    "character": "Forrest",
+    "quote": "Life is like a box of chocolates, you never know what you're gonna get.",
+    "context": "wisdom"
+  },
+  {
+    "movie": "Pulp Fiction",
+    "character": "Jules",
+    "quote": "The path of the righteous man is beset on all sides...",
+    "context": "dramatic"
+  },
+  {
+    "movie": "The Shawshank Redemption",
+    "character": "Andy",
+    "quote": "Hope is a good thing, maybe the best of things.",
+    "context": "hopeful"
+  },
+  {
+    "movie": "Casablanca",
+    "character": "Rick",
+    "quote": "Here's looking at you, kid.",
+    "context": "romantic"
+  },
+  {
+    "movie": "Titanic",
+    "character": "Jack",
+    "quote": "I'm the king of the world!",
+    "context": "triumphant"
+  },
+  {
+    "movie": "Star Wars",
+    "character": "Yoda",
+    "quote": "Do or do not, there is no try.",
+    "context": "motivational"
+  },
+  {
+    "movie": "The Lion King",
+    "character": "Simba",
+    "quote": "Hakuna Matata! What a wonderful phrase!",
+    "context": "carefree"
+  }
+]

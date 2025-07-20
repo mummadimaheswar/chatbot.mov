@@ -1,4 +1,7 @@
 import moviesData from '../data/movies.json';
+import movieQuotes from '../data/movieQuotes.json';
+import characterPersonalities from '../data/characterPersonalities.json';
+import conversationalPatterns from '../data/conversationalPatterns.json';
 import Fuse from 'fuse.js';
 import { pipeline } from '@huggingface/transformers';
 
@@ -17,8 +20,29 @@ export interface MovieEmbedding {
   embedding?: number[];
 }
 
+export interface Quote {
+  movie: string;
+  character: string;
+  quote: string;
+  context: string;
+}
+
+export interface Character {
+  name: string;
+  personality: string;
+  greeting: string;
+  responseStyle: string;
+  catchphrases: string[];
+  moviePrefs: string[];
+}
+
 export class MovieService {
   private movies: Movie[] = moviesData;
+  private quotes: Quote[] = movieQuotes;
+  private characters: Record<string, Character> = characterPersonalities;
+  private patterns = conversationalPatterns;
+  private currentCharacter: string | null = null;
+  private conversationHistory: string[] = [];
   private movieEmbeddings: MovieEmbedding[] = [];
   private fuse: Fuse<Movie>;
   private embedder: any = null;
@@ -247,88 +271,106 @@ export class MovieService {
     return [...new Set(this.movies.map(m => m.genre))];
   }
 
-  // Enhanced query processing with NLP and semantic understanding
+  // Enhanced query processing with conversational AI and character personalities
   async processQuery(input: string): Promise<string> {
+    this.conversationHistory.push(input);
     const query = input.toLowerCase();
     const sentiment = this.analyzeSentiment(input);
     
-    // Enhanced pattern recognition with fuzzy matching
+    // Check for character mode activation
+    const characterMatch = this.detectCharacterRequest(input);
+    if (characterMatch) {
+      this.currentCharacter = characterMatch;
+      return this.getCharacterGreeting(characterMatch);
+    }
+    
+    // Enhanced pattern recognition with natural conversation
     const patterns = {
+      greeting: /(?:hello|hi|hey|what's up|howdy|good morning|good evening)/i,
       rating: /(?:rating|rate|score|how good|how is|what.*rating|what.*score)/i,
-      recommendation: /(?:recommend|suggest|find|show|top|best|good|similar)/i,
-      specific_movie: /(?:tell me about|what about|info|information|details)/i,
+      recommendation: /(?:recommend|suggest|find|show|top|best|good|similar|what should i watch)/i,
+      specific_movie: /(?:tell me about|what about|info|information|details|thoughts on)/i,
       genre_list: /(?:genre|category|type|kind|what.*genre|available)/i,
-      comparison: /(?:better|worse|compare|vs|versus|or)/i,
-      mood_based: /(?:feel like|mood|tonight|today|weekend)/i
+      comparison: /(?:better|worse|compare|vs|versus|or|which)/i,
+      mood_based: /(?:feel like|mood|tonight|today|weekend|in the mood for)/i,
+      quote_request: /(?:quote|famous line|memorable|iconic|dialogue)/i,
+      personality_switch: /(?:talk like|be like|channel|roleplay|pretend)/i
     };
     
-    // 1. Rating queries with enhanced extraction
+    // 1. Handle greetings with personality
+    if (patterns.greeting.test(query) && this.conversationHistory.length <= 2) {
+      return this.getRandomGreeting();
+    }
+    
+    // 2. Quote requests
+    if (patterns.quote_request.test(query)) {
+      return this.getMovieQuote(input);
+    }
+    
+    // 3. Character-specific responses
+    if (this.currentCharacter) {
+      return await this.getCharacterResponse(input);
+    }
+    
+    // 4. Rating queries with conversational flair
     if (patterns.rating.test(query)) {
       const extractedTitle = this.extractMovieTitle(input);
       if (extractedTitle) {
-        return this.getMovieRating(extractedTitle);
+        const rating = this.getMovieRating(extractedTitle);
+        return this.addConversationalFlair(rating, 'rating');
       }
     }
     
-    // 2. Recommendation queries with semantic understanding
+    // 5. Recommendation queries with personality
     if (patterns.recommendation.test(query)) {
       const genre = this.extractGenre(input);
       const moodKeywords = this.extractMoodKeywords(input);
       
-      // Use semantic search if embedder is available
+      let result;
       if (this.embedder && !genre) {
-        return await this.getRecommendations(undefined, 5, input);
+        result = await this.getRecommendations(undefined, 5, input);
+      } else {
+        result = await this.getRecommendations(genre, 5);
       }
       
-      return await this.getRecommendations(genre, 5);
+      return this.addConversationalFlair(result, 'recommendation');
     }
     
-    // 3. Mood-based recommendations
+    // 6. Mood-based recommendations with empathy
     if (patterns.mood_based.test(query)) {
       const mood = this.analyzeMood(input);
-      return await this.getMoodBasedRecommendations(mood);
+      const result = await this.getMoodBasedRecommendations(mood);
+      return this.addEmotionalResponse(result, mood);
     }
     
-    // 4. Genre listing with smart suggestions
+    // 7. Movie comparisons with dramatic flair
+    if (patterns.comparison.test(query)) {
+      return this.handleMovieComparison(input);
+    }
+    
+    // 8. Genre listing with enthusiasm
     if (patterns.genre_list.test(query)) {
       const genres = this.getGenres();
-      const popularGenres = ['Action', 'Drama', 'Comedy', 'Thriller'];
-      return `🎭 **Available genres:** ${genres.join(', ')}\n\n` +
-             `🔥 **Popular choices:** ${popularGenres.join(', ')}\n\n` +
-             `Try: "Recommend action movies" or "What are the best dramas?"`;
+      const response = `🎭 **Available genres:** ${genres.join(', ')}\n\n` +
+                      `🔥 **Popular choices:** Action, Drama, Comedy, Thriller\n\n` +
+                      `Try: "Recommend action movies" or "What are the best dramas?"`;
+      return this.addConversationalFlair(response, 'enthusiasm');
     }
     
-    // 5. Specific movie search with fuzzy matching
-    if (patterns.specific_movie.test(query)) {
-      const extractedTitle = this.extractMovieTitle(input);
-      if (extractedTitle) {
-        return this.getMovieRating(extractedTitle);
-      }
-    }
-    
-    // 6. Fuzzy search across all movie titles
+    // 9. Fuzzy search with conversational response
     const fuzzyResults = this.fuzzySearch(input);
     if (fuzzyResults.length > 0) {
       const movie = fuzzyResults[0];
-      return `🎬 **${movie.title}** (${movie.year})\n\n` +
-             `⭐ **Rating:** ${movie.rating}/10\n` +
-             `🎭 **Genre:** ${movie.genre}\n` +
-             `🎬 **Director:** ${movie.director}\n\n` +
-             `📖 **Description:** ${movie.description}`;
+      const movieInfo = `🎬 **${movie.title}** (${movie.year})\n\n` +
+                       `⭐ **Rating:** ${movie.rating}/10\n` +
+                       `🎭 **Genre:** ${movie.genre}\n` +
+                       `🎬 **Director:** ${movie.director}\n\n` +
+                       `📖 **Description:** ${movie.description}`;
+      return this.addConversationalFlair(movieInfo, 'discovery');
     }
     
-    // 7. Sentiment-based response
-    const sentimentResponse = this.getSentimentResponse(sentiment);
-    
-    // 8. Default enhanced response with smart suggestions
-    return `🤖 **I'm your enhanced Movie AI!** ${sentimentResponse}\n\n` +
-           `🎯 **I can help you with:**\n` +
-           `• 🔍 **Find ratings**: "What's the rating of Inception?"\n` +
-           `• 🎯 **Smart recommendations**: "Recommend movies like The Matrix"\n` +
-           `• 📝 **Movie details**: "Tell me about The Dark Knight"\n` +
-           `• 🎭 **Browse genres**: "Show me action movies"\n` +
-           `• 😊 **Mood-based**: "I want something funny tonight"\n\n` +
-           `💡 **Try being specific!** The more details you give, the better I can help.`;
+    // 10. Default response with conversation starters
+    return this.getEngagingDefaultResponse(sentiment);
   }
 
   private extractMovieTitle(input: string): string | null {
@@ -402,15 +444,155 @@ export class MovieService {
     return `🎭 **Perfect for your ${mood} mood:**\n\n${result}`;
   }
 
-  private getSentimentResponse(sentiment: string): string {
-    switch (sentiment) {
-      case 'positive':
-        return "I love your enthusiasm! 🎉";
-      case 'negative':
-        return "Let me help brighten your day with some great movies! 🌟";
-      default:
-        return "Ready to discover some amazing films? 🎬";
+  // New conversational methods
+  private detectCharacterRequest(input: string): string | null {
+    const lowerInput = input.toLowerCase();
+    const characters = Object.keys(this.characters);
+    
+    for (const char of characters) {
+      if (lowerInput.includes(char) || 
+          lowerInput.includes(this.characters[char].name.toLowerCase()) ||
+          (char === 'tony_stark' && (lowerInput.includes('iron man') || lowerInput.includes('stark')))) {
+        return char;
+      }
     }
+    
+    return null;
+  }
+
+  private getCharacterGreeting(characterKey: string): string {
+    const character = this.characters[characterKey];
+    return `🎭 **${character.name} Mode Activated!**\n\n` +
+           `${character.greeting}\n\n` +
+           `*${character.personality}*\n\n` +
+           `${this.getRandomElement(character.catchphrases)}`;
+  }
+
+  private async getCharacterResponse(input: string): Promise<string> {
+    if (!this.currentCharacter) return await this.processQuery(input);
+    
+    const character = this.characters[this.currentCharacter];
+    const baseResponse = await this.processQuery(input);
+    
+    // Add character flavor to the response
+    const characterFlavor = this.getRandomElement(character.catchphrases);
+    const styledResponse = this.styleResponseForCharacter(baseResponse, character);
+    
+    return `🎭 **${character.name}:** ${styledResponse}\n\n*${characterFlavor}*`;
+  }
+
+  private styleResponseForCharacter(response: string, character: Character): string {
+    switch (character.name) {
+      case 'Master Yoda':
+        return this.yodaSpeak(response);
+      case 'Tony Stark':
+        return this.tonyStarkSpeak(response);
+      case 'Sherlock Holmes':
+        return this.sherlockSpeak(response);
+      default:
+        return response;
+    }
+  }
+
+  private yodaSpeak(text: string): string {
+    // Simple Yoda speech pattern simulation
+    return text.replace(/You should/g, 'Watch, you should')
+             .replace(/I recommend/g, 'Recommend, I do')
+             .replace(/This movie/g, 'Strong with the Force, this movie');
+  }
+
+  private tonyStarkSpeak(text: string): string {
+    return text.replace(/🎬/g, '🔧')
+             .replace(/Here's/g, "FRIDAY says")
+             .replace(/I think/g, "My AI analysis indicates");
+  }
+
+  private sherlockSpeak(text: string): string {
+    return text.replace(/I notice/g, 'I deduce')
+             .replace(/It seems/g, 'Elementary, Watson - it appears')
+             .replace(/probably/g, 'with 97.3% certainty');
+  }
+
+  private getMovieQuote(input: string): string {
+    const movieTitle = this.extractMovieTitle(input);
+    let relevantQuotes = this.quotes;
+    
+    if (movieTitle) {
+      relevantQuotes = this.quotes.filter(q => 
+        q.movie.toLowerCase().includes(movieTitle.toLowerCase())
+      );
+    }
+    
+    if (relevantQuotes.length === 0) {
+      relevantQuotes = this.quotes;
+    }
+    
+    const quote = this.getRandomElement(relevantQuotes);
+    return `🎬 **"${quote.quote}"**\n\n` +
+           `— ${quote.character}, *${quote.movie}*\n\n` +
+           `${this.getRandomElement(this.patterns.movieReactions.high_rating)}`;
+  }
+
+  private addConversationalFlair(response: string, type: string): string {
+    const transition = this.getRandomElement(this.patterns.transitions.enthusiasm);
+    const filler = this.getRandomElement(this.patterns.conversationalFillers);
+    
+    return `${transition} ${filler}\n\n${response}`;
+  }
+
+  private addEmotionalResponse(response: string, mood: string): string {
+    const emotionalResponse = this.getRandomElement(this.patterns.emotionalResponses.sympathy);
+    return `${emotionalResponse}\n\n${response}`;
+  }
+
+  private handleMovieComparison(input: string): string {
+    const movies = this.extractMultipleMovies(input);
+    if (movies.length >= 2) {
+      const movie1 = movies[0];
+      const movie2 = movies[1];
+      
+      return `🥊 **Epic Movie Battle!**\n\n` +
+             `🎬 **${movie1.title}** (${movie1.rating}/10) vs **${movie2.title}** (${movie2.rating}/10)\n\n` +
+             `**Winner:** ${movie1.rating > movie2.rating ? movie1.title : movie2.title}!\n\n` +
+             `${this.getRandomElement(this.patterns.movieReactions.high_rating)}`;
+    }
+    
+    return "Tell me which movies you'd like me to compare, and I'll give you the ultimate showdown! 🥊";
+  }
+
+  private extractMultipleMovies(input: string): Movie[] {
+    const words = input.toLowerCase().split(/\s+/);
+    const foundMovies: Movie[] = [];
+    
+    for (const movie of this.movies) {
+      if (words.some(word => movie.title.toLowerCase().includes(word))) {
+        foundMovies.push(movie);
+      }
+    }
+    
+    return foundMovies.slice(0, 2);
+  }
+
+  private getRandomGreeting(): string {
+    return this.getRandomElement(this.patterns.greetings);
+  }
+
+  private getEngagingDefaultResponse(sentiment: string): string {
+    const greeting = this.getRandomElement(this.patterns.greetings);
+    const emotionalResponse = this.getRandomElement(this.patterns.emotionalResponses.excitement);
+    
+    return `${greeting}\n\n${emotionalResponse}\n\n` +
+           `🎯 **I'm your conversational Movie AI!** I can:\n` +
+           `• 🗣️ **Chat naturally** about any movie\n` +
+           `• 🎭 **Channel characters** like Yoda, Tony Stark, or Sherlock\n` +
+           `• 💬 **Share iconic quotes** and memorable lines\n` +
+           `• 🎪 **Make recommendations** with personality and flair\n` +
+           `• 😊 **Match your mood** and energy level\n\n` +
+           `💡 **Try saying:** "Talk like Yoda" or "Give me a quote from The Dark Knight"!`;
+  }
+
+  private getRandomElement<T>(array: T[]): T {
+    return array[Math.floor(Math.random() * array.length)];
   }
 
   // Enhanced AI response with multiple intelligence layers

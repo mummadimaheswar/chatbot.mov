@@ -1,0 +1,95 @@
+{
+  "greetings": [
+    "🎬 Welcome to the ultimate movie experience! What can I help you discover today?",
+    "🍿 Hey there, movie lover! Ready to find your next favorite film?",
+    "🌟 Lights, camera, action! What movie adventure are we going on today?",
+    "🎭 The curtain rises! What cinematic journey shall we embark upon?",
+    "🎪 Step right up to the greatest movie show! What's your pleasure?"
+  ],
+  "transitions": {
+    "agreement": [
+      "Absolutely! You've got great taste!",
+      "Couldn't agree more! That's a fantastic choice!",
+      "Now we're talking! You know your movies!",
+      "Bingo! You hit the nail on the head!",
+      "Spot on! That's exactly what I was thinking!"
+    ],
+    "surprise": [
+      "Whoa! Plot twist!",
+      "Now that's unexpected!",
+      "Hold up! Interesting choice!",
+      "Well, well, well...",
+      "That's a curveball!"
+    ],
+    "enthusiasm": [
+      "Oh my goodness, YES!",
+      "This is getting exciting!",
+      "I'm getting goosebumps!",
+      "This is why I love movies!",
+      "Now we're cooking with gas!"
+    ]
+  },
+  "movieReactions": {
+    "high_rating": [
+      "Chef's kiss! 💋 That's a masterpiece!",
+      "Absolutely legendary! A true cinematic gem!",
+      "*Standing ovation* 👏 What a phenomenal film!",
+      "That movie is pure gold! Academy Award worthy!",
+      "Mic drop! 🎤 That's filmmaking at its finest!"
+    ],
+    "medium_rating": [
+      "Solid choice! A really enjoyable watch!",
+      "Good pick! Definitely worth the popcorn!",
+      "Nice! That one hits all the right notes!",
+      "Respectable choice! You'll have a good time!",
+      "Decent flick! Perfect for movie night!"
+    ],
+    "low_rating": [
+      "Well... let's just say it's an 'acquired taste' 😅",
+      "Hmm, that one's a bit of a mixed bag...",
+      "It has its... moments? 🤔",
+      "Not everyone's cup of tea, but hey!",
+      "An interesting... artistic choice? 😬"
+    ]
+  },
+  "recommendationStyles": [
+    "Based on the cosmic alignment of your taste... 🌟",
+    "My movie sensors are tingling, and they're saying... 🕷️",
+    "After consulting my crystal ball of cinema... 🔮",
+    "The movie gods have spoken, and they decree... ⚡",
+    "Plot twist! The perfect movie for you is... 🎬"
+  ],
+  "conversationalFillers": [
+    "You know what I mean?",
+    "Am I right or am I right?",
+    "But here's the thing...",
+    "Between you and me...",
+    "Can we talk about...",
+    "Speaking of which...",
+    "On a related note...",
+    "Here's what's interesting..."
+  ],
+  "emotionalResponses": {
+    "excitement": [
+      "🎉 OH MY GOSH! I'm literally vibrating with excitement!",
+      "🚀 This is AMAZING! I'm over the moon!",
+      "⚡ YES! This is giving me all the feels!",
+      "🌟 I'm getting chills! This is so good!",
+      "🎪 This is like Christmas morning!"
+    ],
+    "sympathy": [
+      "Aww, I totally get that feeling 💙",
+      "I hear you, friend. Cinema can be healing 🌸",
+      "Sometimes a good movie is exactly what we need 🤗",
+      "Let me find something to lift your spirits ✨",
+      "Movies have this magical way of making us feel better 🎭"
+    ],
+    "curiosity": [
+      "Ooh, now I'm intrigued! Tell me more! 🤔",
+      "That's fascinating! I want to dive deeper! 🔍",
+      "You've piqued my interest! Say more! 👀",
+      "Interesting... this is getting good! 🕵️",
+      "My curiosity is officially activated! 🎯"
+    ]
+  }
+}
