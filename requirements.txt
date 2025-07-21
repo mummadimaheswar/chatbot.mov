@@ -1,8 +1,2 @@
-fastapi
-uvicorn
-tensorflow
-numpy
-pandas
 streamlit
 requests
-scikit-learn

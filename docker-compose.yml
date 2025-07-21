@@ -1,23 +1,27 @@
-# docker-compose.yml
 version: "3.9"
 
 services:
-  chatbot-api:
-    build: .
-    container_name: chatbot_api
+  backend:
+    build: ./backend
+    container_name: chatbot_backend
     ports:
       - "8000:8000"
-    volumes:
-      - .:/app
-    restart: always
 
-  chatbot-frontend:
-    image: streamlit/streamlit:latest
+  frontend:
+    build: ./frontend
     container_name: chatbot_frontend
-    working_dir: /app/frontend
-    volumes:
-      - ./frontend:/app/frontend
-    command: streamlit run app.py --server.port 8501 --server.address 0.0.0.0
     ports:
       - "8501:8501"
-    restart: always
+    depends_on:
+      - backend
+
+  nginx:
+    image: nginx:alpine
+    container_name: chatbot_nginx
+    ports:
+      - "10000:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - backend
+      - frontend
